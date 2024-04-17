@@ -35,7 +35,7 @@ class CreateUserViewModel: ObservableObject {
             
             countries.append(CountryModel(commonName: "-")) //Used as first element before user selection
             
-            countries = response.sorted(by: { $0.name?.common ?? "" < $1.name?.common ?? "" }).compactMap({ CountryModel(commonName: $0.name?.common ?? "") }) //Maps alphabetically ordered countries response on an internal model
+            countries.append(contentsOf: response.sorted(by: { $0.name?.common ?? "" < $1.name?.common ?? "" }).compactMap({ CountryModel(commonName: $0.name?.common ?? "") })) //Maps alphabetically ordered countries response on an internal model
             
             countries.removeAll(where: { $0.commonName == "" }) //Removes eventually
             
