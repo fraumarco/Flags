@@ -21,6 +21,11 @@ class CreateUserViewController: UIViewController, Storyboarded, UpdateViewProtoc
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var saveButton: UIButton!
     
+    @IBOutlet weak var nameErrorLabel: UILabel!
+    @IBOutlet weak var countryErrorLabel: UILabel!
+    @IBOutlet weak var phoneNumberErrorLabel: UILabel!
+    @IBOutlet weak var emailErrorLabel: UILabel!
+    
     private var selectedCountry: String = ""
     
     override class func awakeFromNib() {
@@ -52,6 +57,22 @@ class CreateUserViewController: UIViewController, Storyboarded, UpdateViewProtoc
             .publisher(for: UITextField.textDidChangeNotification, object: emailTextField)
             .map { ($0.object as! UITextField).text ?? "" }
             .assign(to: \.email, on: viewModel)
+            .store(in: &cancellables)
+        
+        viewModel.isValidNamePublisher
+            .assign(to: \.isHidden, on: nameErrorLabel)
+            .store(in: &cancellables)
+        
+        viewModel.isValidCountryPublisher
+            .assign(to: \.isHidden, on: countryErrorLabel)
+            .store(in: &cancellables)
+        
+        viewModel.isValidPhoneNumberPublisher
+            .assign(to: \.isHidden, on: phoneNumberErrorLabel)
+            .store(in: &cancellables)
+        
+        viewModel.isValidEmailPublisher
+            .assign(to: \.isHidden, on: emailErrorLabel)
             .store(in: &cancellables)
         
         viewModel.isButtonEnabled
@@ -108,4 +129,12 @@ extension CreateUserViewController: UIPickerViewDelegate, UIPickerViewDataSource
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         viewModel?.country = viewModel?.countries[row].commonName ?? ""
     }
+}
+
+extension CreateUserViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        return self.view.endEditing(true)
+    }
+    
 }
